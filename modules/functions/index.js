@@ -7,23 +7,23 @@ var config = require('../../modules/config'),
 
 var _self = module.exports = {
     checkAuth: function (callback) {
-        console.log('check auth [fetch page]');
+        console.log('check auth [fetch page]'.green);
         _self.getPage(config.url, function (html) {
             if (html) {
-                console.log('check auth [check auth status]');
+                console.log('check auth [check auth status]'.green);
                 loginForm = html('input#login').length;
                 if (loginForm === 0) {
-                    console.log('check auth [already auth]');
+                    console.log('check auth [already auth]'.blue);
                     callback(1);
                 } else {
-                    console.log('check auth [need auth]');
-                    console.log('check auth [do auth]');
+                    console.log('check auth [need auth]'.yellow);
+                    console.log('check auth [do auth]'.yellow);
                     _self.doAuth(function (auth) {
                         if (auth === 1) {
-                            console.log('check auth [success]');
+                            console.log('check auth [success]'.blue);
                             callback(data);
                         } else {
-                            console.log('check auth [failed]');
+                            console.log('check auth [failed]'.red);
                             callback(0);
                         }
                     })
@@ -32,7 +32,7 @@ var _self = module.exports = {
         });
     },
     doAuth: function (callback) {
-        console.log('do auth [send auth request]');
+        console.log('do auth [send auth request]'.green);
         request({
             uri: config.auth,
             referer: config.url,
@@ -44,29 +44,29 @@ var _self = module.exports = {
             method: 'POST'
         }, function (err, res) {
             if (!err && res.statusCode === 302) {
-                console.log('do auth [success]');
+                console.log('do auth [success]'.blue);
                 callback(1);
             } else {
-                console.log('do auth [failed]');
+                console.log('do auth [failed]'.red);
                 callback(0);
             }
         });
     },
     search: function (string, callback) {
         var url = config.search + urlencode(string);
-        console.log('category (get) fetch page: ' + url);
+        console.log('category (get) fetch page: '.green + url.bold.magenta);
         _self.getPage(url, function (page) {
             if (page) {
-                console.log('category page [fetch success]');
+                console.log('category page [fetch success]'.blue);
                 _self.getSystemVars(string, page, function (variables) {
-                    console.log('emulate fetch alert');
+                    console.log('emulate fetch alert'.green);
                     request({
                         url: config.alert,
                         headers: {'Content-Type': 'application/json; charset=utf-8'}
                     }, function (err, res) {
                         if (!err && res.statusCode === 200) {
-                            console.log('emulate fetch alert [fetch alert success]');
-                            console.log('search (post) fetch page: ' + url);
+                            console.log('emulate fetch alert [fetch alert success]'.blue);
+                            console.log('search (post) fetch page: '.green + url.bold.magenta);
                             var i = 0,
                                 interval = setInterval(function () {
                                     var msg = '';
@@ -74,9 +74,11 @@ var _self = module.exports = {
                                     for (var j = 0; i != j; j++) {
                                         msg += '.';
                                     }
-                                    console.log(msg);
-                                }, 300);
+                                    msg = 'Timeout' + msg;
+                                    process.stdout.write(msg.rainbow + "\r");
+                                }, 100);
                             setTimeout(function () {
+                                console.log();
                                 clearInterval(interval);
                                 request({
                                     uri: url,
@@ -85,29 +87,29 @@ var _self = module.exports = {
                                     method: 'POST'
                                 }, function (err, res, body) {
                                     if (!err && res.statusCode === 200 && body != undefined) {
-                                        console.log('search page (post) [fetch success]');
+                                        console.log('search page (post) [fetch success]'.blue);
                                         var $ = cheerio.load(body);
                                         if ($ != undefined) {
-                                            console.log('search (post) page [load success]');
+                                            console.log('search (post) page [load success]'.blue);
                                             callback($);
                                         } else {
-                                            console.log('search (post) page [load failed]');
+                                            console.log('search (post) page [load failed]'.red);
                                             callback();
                                         }
                                     } else {
-                                        console.log('search (post) page [fetch failed]');
+                                        console.log('search (post) page [fetch failed]'.red);
                                         callback();
                                     }
                                 });
                             }, 3000);
                         } else {
-                            console.log('emulate fetch alert [fetch alert failed]');
+                            console.log('emulate fetch alert [fetch alert failed]'.red);
                             callback();
                         }
                     });
                 })
             } else {
-                console.log('category (get) page [fetch failed]');
+                console.log('category (get) page [fetch failed]'.red);
                 callback();
             }
         });
@@ -116,7 +118,7 @@ var _self = module.exports = {
         callback(html('table').eq(2).text());
     },
     getSystemVars: function (string, html, callback) {
-        console.log('get system variables');
+        console.log('get system variables'.green);
         callback({
             'ctl00$ctl00$b$tm': 'ctl00$ctl00$b$tm|ctl00$ctl00$b$b$btnPost',
             __EVENTTARGET: 'ctl00$ctl00$b$b$btnPost',
@@ -128,20 +130,20 @@ var _self = module.exports = {
     },
     getPage: function (url, callback) {
         request(url, function (err, res, body) {
-            console.log('get page [fetch page: ' + url + ']');
+            console.log('get page [fetch page: '.green + url.bold.magenta + ']'.green);
             if (!err && res.statusCode === 200 && body != undefined) {
-                console.log('get page [fetch success]');
-                console.log('get page [load html body]');
+                console.log('get page [fetch success]'.blue);
+                console.log('get page [load html body]'.green);
                 var $ = cheerio.load(body);
                 if ($ != undefined) {
-                    console.log('get page [load success]');
+                    console.log('get page [load success]'.blue);
                     callback($);
                 } else {
-                    console.log('get page [load failed]');
+                    console.log('get page [load failed]'.red);
                     callback();
                 }
             } else {
-                console.log('get page [fetch failed: ' + err + ']');
+                console.log('get page [fetch failed: ' + err + ']'.red);
                 callback();
             }
         });

@@ -1,6 +1,7 @@
 var config = require('./modules/config'),
     functions = require('./modules/functions'),
-    logger = require('./modules/logger');
+    logger = require('./modules/logger'),
+    colors = require('colors');
 
 functions.checkAuth(function (auth) {
     if (auth) {
@@ -11,9 +12,11 @@ functions.checkAuth(function (auth) {
                 for (var j = 0; i != j; j++) {
                     msg += '.';
                 }
-                console.log(msg);
-            }, 300);
+                msg = 'Timeout' + msg;
+                process.stdout.write(msg.rainbow + "\r");
+            }, 100);
         setTimeout(function () {
+            console.log();
             clearInterval(interval);
             functions.search('C182/606', function (result) {
                 if (result) {
@@ -21,15 +24,15 @@ functions.checkAuth(function (auth) {
                         if (data) {
                             console.log(data);
                         } else {
-                            console.log('parse failed, something wrong bro!');
+                            console.log('parse failed, something wrong bro!'.red);
                         }
                     });
                 } else {
-                    console.log('search failed, something wrong bro!');
+                    console.log('search failed, something wrong bro!'.red);
                 }
             });
         }, 3000);
     } else {
-        console.log('auth failed, something wrong bro!');
+        console.log('auth failed, something wrong bro!'.red);
     }
 });
