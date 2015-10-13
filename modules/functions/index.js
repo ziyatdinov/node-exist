@@ -52,7 +52,7 @@ var _self = module.exports = {
             }
         });
     },
-    search: function (string, callback) {
+    search: function (string, firm, callback) {
         var url = config.search + urlencode(string);
         console.log('category (get) fetch page: '.green + url.bold.magenta);
         _self.getPage(url, function (page) {
@@ -91,7 +91,26 @@ var _self = module.exports = {
                                         var $ = cheerio.load(body);
                                         if ($ != undefined) {
                                             console.log('search (post) page [load success]'.blue);
-                                            callback($);
+                                            if ($('h1').text().split(' ')[1]==='Артикул'){
+                                                $('tr').each(function(){
+
+                                                    var children = $(this).children();
+                                                    var firmItem = children.eq(0).children().eq(0);
+                                                    var artItem  = children.eq(0).children().eq(1);
+                                                    var urlItem  = children.eq(1).children().eq(0);
+
+                                                    var row = {
+                                                        'firm' : firmItem.text(),
+                                                        'art' :  artItem.text(),
+                                                        'url' :  urlItem.attr('href')
+                                                    };
+
+                                                    console.log(row['firm']+' '+row['art']+' '+row['url']);
+
+                                                })
+                                            } else {
+                                                callback($);
+                                            }
                                         } else {
                                             console.log('search (post) page [load failed]'.red);
                                             callback();

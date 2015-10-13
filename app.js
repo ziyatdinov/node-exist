@@ -18,7 +18,7 @@ functions.checkAuth(function (auth) {
         setTimeout(function () {
             console.log();
             clearInterval(interval);
-            functions.search('C182/606', function (result) {
+            functions.search('C182', 'Champion', function (result) {
                 if (result) {
                     functions.parse(result, function (data) {
                         if (data) {
