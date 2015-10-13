@@ -20,10 +20,20 @@ functions.checkAuth(function (auth) {
         setTimeout(function () {
             console.log();
             clearInterval(interval);
-            functions.search('C182', 'Champion', function (result) {
+            functions.search('Q20TT', 'Denso', function (result) {
                 if (result) {
                     if(Type(result,String)===true){
-                        console.log(result);
+                        //console.log(result);
+                        functions.search_p(result,function(result){
+                                functions.parse(result, function (data) {
+                                    if (data) {
+                                        console.log(data);
+                                    } else {
+                                        console.log('parse failed, something wrong bro!'.red);
+                                    }
+                                });
+                            }
+                        );
                     } else {
                         functions.parse(result, function (data) {
                             if (data) {

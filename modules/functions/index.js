@@ -92,7 +92,7 @@ var _self = module.exports = {
                                         if ($ != undefined) {
                                             console.log('search (post) page [load success]'.blue);
 
-                                            //console.log($.html());
+                                            //console.log($('h1').text().split(' ')[1]);
 
                                             if ($('h1').text().split(' ')[1]==='Артикул'){
                                                 $('tr').each(function(){
@@ -111,8 +111,97 @@ var _self = module.exports = {
                                                     //console.log(row['firm']+' '+row['art']+' '+row['url']);
 
                                                     if(row['firm']===firm && row['art']===string){
+                                                        //console.log('firm: '.green + firm .blue)
+                                                        callback(row['url'].split('=')[1]);
+                                                    }
+
+                                                })
+                                            } else {
+                                                callback($);
+                                            }
+                                        } else {
+                                            console.log('search (post) page [load failed]'.red);
+                                            callback();
+                                        }
+                                    } else {
+                                        console.log('search (post) page [fetch failed]'.red);
+                                        callback();
+                                    }
+                                });
+                            }, 3000);
+                        } else {
+                            console.log('emulate fetch alert [fetch alert failed]'.red);
+                            callback();
+                        }
+                    });
+                })
+            } else {
+                console.log('category (get) page [fetch failed]'.red);
+                callback();
+            }
+        });
+    },
+    search_p: function (string, callback) {
+        var url = config.search_p + urlencode(string);
+        console.log('category (get) fetch page: '.green + url.bold.magenta);
+        _self.getPage(url, function (page) {
+            if (page) {
+                console.log('category page [fetch success]'.blue);
+                _self.getSystemVars(string, page, function (variables) {
+                    console.log('emulate fetch alert'.green);
+                    request({
+                        url: config.alert,
+                        headers: {'Content-Type': 'application/json; charset=utf-8'}
+                    }, function (err, res) {
+                        if (!err && res.statusCode === 200) {
+                            console.log('emulate fetch alert [fetch alert success]'.blue);
+                            console.log('search (post) fetch page: '.green + url.bold.magenta);
+                            var i = 0,
+                                interval = setInterval(function () {
+                                    var msg = '';
+                                    i++;
+                                    for (var j = 0; i != j; j++) {
+                                        msg += '.';
+                                    }
+                                    msg = 'Timeout' + msg;
+                                    process.stdout.write(msg.rainbow + "\r");
+                                }, 100);
+                            setTimeout(function () {
+                                console.log();
+                                clearInterval(interval);
+                                request({
+                                    uri: url,
+                                    referer: config.url,
+                                    formData: variables,
+                                    method: 'POST'
+                                }, function (err, res, body) {
+                                    if (!err && res.statusCode === 200 && body != undefined) {
+                                        console.log('search page (post) [fetch success]'.blue);
+                                        var $ = cheerio.load(body);
+                                        if ($ != undefined) {
+                                            console.log('search (post) page [load success]'.blue);
+
+                                            //console.log($.html());
+
+                                            if ($('h1').text().split(' ')[1]==='Артикул'){
+                                                $('tr').each(function(){
+
+                                                    var children = $(this).children();
+                                                    var firmItem = children.eq(0).children().eq(0);
+                                                    var artItem  = children.eq(0).children().eq(1);
+                                                    var urlItem  = children.eq(1).children().eq(0);
+
+                                                    var row = {
+                                                        'firm' : firmItem.text(),
+                                                        'art' :  artItem.text().replace(' ',''),
+                                                        'url' :  urlItem.attr('href')
+                                                    };
+
+                                                    //console.log(row['firm']+' '+row['art']+' '+row['url']);
+
+                                                    if(row['firm']===firm && row['art']===string){
                                                         console.log('firm: '.green + firm .blue)
-                                                        callback(row['url'].substring(1));
+                                                        callback(row['url'].split('=')[1]);
                                                     }
 
                                                 })
@@ -142,7 +231,16 @@ var _self = module.exports = {
         });
     },
     parse: function (html, callback) {
-        callback(html('table').eq(2).text());
+
+        var row = [];
+        //console.log(html('table').eq(2).text());
+        html('div.artblock').each(function(i, elem){
+            console.log($(this).text());
+            //var children = $(this).children();
+            //var artItem  = children.eq(0).html();
+            //row.push(artItem);
+        });
+        //callback(row);
     },
     getSystemVars: function (string, html, callback) {
         console.log('get system variables'.green);

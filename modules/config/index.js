@@ -13,3 +13,4 @@ config.url = config.proto + '://www.exist.ru/';
 config.auth = config.url + 'Profile/Login.aspx?ReturnUrl=%2fProfile%2fExit.aspx';
 config.alert = config.url + 'Profile/Api/Alerts.asmx/GetAlerts?a=null';
 config.search = config.url + 'price.aspx?sr=-4&pcode=';
+config.search_p = config.url + 'price.aspx?pid=';
