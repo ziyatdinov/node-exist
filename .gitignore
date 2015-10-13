@@ -1,4 +1,5 @@
-git push .DS_Store
 /.idea
 /node_modules
+/modules/request/cookie.json
+.DS_Store
 all-logs.log
