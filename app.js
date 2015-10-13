@@ -1,7 +1,9 @@
 var config = require('./modules/config'),
     functions = require('./modules/functions'),
     logger = require('./modules/logger'),
-    colors = require('colors');
+    colors = require('colors'),
+    Type = require('type-of-is');
+
 
 functions.checkAuth(function (auth) {
     if (auth) {
@@ -20,13 +22,17 @@ functions.checkAuth(function (auth) {
             clearInterval(interval);
             functions.search('C182', 'Champion', function (result) {
                 if (result) {
-                    functions.parse(result, function (data) {
-                        if (data) {
-                            console.log(data);
-                        } else {
-                            console.log('parse failed, something wrong bro!'.red);
-                        }
-                    });
+                    if(Type(result,String)===true){
+                        console.log(result);
+                    } else {
+                        functions.parse(result, function (data) {
+                            if (data) {
+                                console.log(data);
+                            } else {
+                                console.log('parse failed, something wrong bro!'.red);
+                            }
+                        });
+                    }
                 } else {
                     console.log('search failed, something wrong bro!'.red);
                 }

@@ -91,6 +91,9 @@ var _self = module.exports = {
                                         var $ = cheerio.load(body);
                                         if ($ != undefined) {
                                             console.log('search (post) page [load success]'.blue);
+
+                                            //console.log($.html());
+
                                             if ($('h1').text().split(' ')[1]==='Артикул'){
                                                 $('tr').each(function(){
 
@@ -105,7 +108,12 @@ var _self = module.exports = {
                                                         'url' :  urlItem.attr('href')
                                                     };
 
-                                                    console.log(row['firm']+' '+row['art']+' '+row['url']);
+                                                    //console.log(row['firm']+' '+row['art']+' '+row['url']);
+
+                                                    if(row['firm']===firm && row['art']===string){
+                                                        console.log('firm: '.green + firm .blue)
+                                                        callback(row['url'].substring(1));
+                                                    }
 
                                                 })
                                             } else {
