@@ -20,29 +20,17 @@ functions.checkAuth(function (auth) {
         setTimeout(function () {
             console.log();
             clearInterval(interval);
-            functions.search('Q20TT', 'Denso', function (result) {
+            var row = {'firm': 'MGA','art': 'W683','url': 'pcode'}
+            functions.search(row, function (result) {
                 if (result) {
-                    if(Type(result,String)===true){
-                        //console.log(result);
-                        functions.search_p(result,function(result){
-                                functions.parse(result, function (data) {
-                                    if (data) {
-                                        console.log(data);
-                                    } else {
-                                        console.log('parse failed, something wrong bro!'.red);
-                                    }
-                                });
-                            }
-                        );
-                    } else {
-                        functions.parse(result, function (data) {
-                            if (data) {
-                                console.log(data);
-                            } else {
-                                console.log('parse failed, something wrong bro!'.red);
-                            }
-                        });
-                    }
+                    console.log('*'.red);
+                    functions.parse(result, function (data) {
+                        if (data) {
+                            console.log(data);
+                        } else {
+                            console.log('parse failed, something wrong bro!'.red);
+                        }
+                    });
                 } else {
                     console.log('search failed, something wrong bro!'.red);
                 }
