@@ -125,12 +125,11 @@ var _self = module.exports = {
         console.log('*'.red);
         if (html('h1').text().split(' ')[1]==='Артикул'){
             console.log('1*'.red);
-            html('tr').each(function(){
-                var children = $(this).children()
-                console.log(html('tr').children().text());
-                //console.log($(this).children());
-                /*var children = $(this).children();
-                var firmItem = children.eq(0).children().eq(0);
+            html('tr').each(function(i,el){
+                console.log(el);
+                //console.log(el.text().red);
+                //var childrens = el.children();
+                /*var firmItem = children.eq(0).children().eq(0);
                 var artItem  = children.eq(0).children().eq(1);
                 var urlItem  = children.eq(1).children().eq(0);
                 console.log('***'.red);
@@ -142,7 +141,6 @@ var _self = module.exports = {
                 console.log(row['firm']+' '+row['art']+' '+row['url']);*/
             });
         } else {
-            console.log('2*'.red);
             callback(html('table').eq(2).text());
         }
 
